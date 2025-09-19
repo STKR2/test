@@ -1,23 +1,30 @@
+# main.py
+import os
 import asyncio
+import threading
+import time
 import random
 import string
 import re
 from telethon import TelegramClient, events
 from telethon.tl.functions.contacts import ResolveUsernameRequest
 from telethon.errors import UsernameNotOccupiedError, UsernameInvalidError
+from flask import Flask
 
-API_ID = 8934899
-API_HASH = "bf3e98d2c351e4ad06946b4897374a1e"
-BOT_TOKEN = "8310654978:AAHt7wp6aAtNrOhLCn1Ob9s4BLHZ7dYRdYU"
+# --- إعدادات التوكن (أحسن: خزنها كـ env vars في Dashboard) ---
+API_ID = int(os.getenv("API_ID", "8934899"))
+API_HASH = os.getenv("API_HASH", "bf3e98d2c351e4ad06946b4897374a1e")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8474977711:AAFcuvjZd-VWM7wyhZ2l_vnHpYp_imbhxAo")
 
+# --- تهيئة Telethon ---
 tele_client = TelegramClient("botyee", API_ID, API_HASH)
-# المطور الوحيد @RR8R9  
 user_states = {}
 
 @tele_client.on(events.NewMessage(pattern=r'^/start$'))
 async def start_handler(event):
     await event.reply("أهلًا بك في بوت فحص وتوليد اليوزرات\n\n-  الأمر /generation لتوليد يوزرات .\n- الأمر /check لفحص اليوزر .")
-    
+
+# (باقي كود التوليد والفحص كما عندك)
 def generate_username_by_pattern(pattern):
     letters = string.ascii_lowercase
     digits = string.digits
@@ -102,13 +109,36 @@ async def check_handler(event):
             status = f"خطأ: {str(e)}"
 
         results.append(f"- {username} - ➤ {status}")
-        await asyncio.sleep(3)  
+        await asyncio.sleep(3)
 
     await event.reply("\n".join(results[:50]))
 
-async def main():
+# --- دالة تشغيل البوت ---
+async def main_bot():
     await tele_client.start(bot_token=BOT_TOKEN)
     await tele_client.run_until_disconnected()
 
+# --- شغّل البوت في ثريد منفصل ---
+def start_bot_in_thread():
+    asyncio.run(main_bot())
+
+# --- سيرفر ويب بسيط لصفحة الحالة ---
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Bot is running"
+
+@app.route("/health")
+def health():
+    return "OK"
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    # شغّل البوت في background thread
+    t = threading.Thread(target=start_bot_in_thread, daemon=True)
+    t.start()
+
+    # شغّل السيرفر على PORT من متغير البيئة أو 8000 افتراضياً
+    port = int(os.getenv("PORT", "8000"))
+    # مهم جداً: host = "0.0.0.0"
+    app.run(host="0.0.0.0", port=port)
