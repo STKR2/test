@@ -14,7 +14,7 @@ from flask import Flask
 # --- إعدادات التوكن (أحسن: خزنها كـ env vars في Dashboard) ---
 API_ID = int(os.getenv("API_ID", "8934899"))
 API_HASH = os.getenv("API_HASH", "bf3e98d2c351e4ad06946b4897374a1e")
-BOT_TOKEN = os.getenv("BOT_TOKEN", "8474977711:AAFcuvjZd-VWM7wyhZ2l_vnHpYp_imbhxAo")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8310654978:AAEly3ysgaOsgF06VDEtE7qdTevOx8C-ABs")
 
 # --- تهيئة Telethon ---
 tele_client = TelegramClient("botyee", API_ID, API_HASH)
