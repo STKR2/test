@@ -8,7 +8,7 @@ from telethon.errors import UsernameNotOccupiedError, UsernameInvalidError
 
 API_ID = 8934899
 API_HASH = "bf3e98d2c351e4ad06946b4897374a1e"
-BOT_TOKEN = "8474977711:AAFcuvjZd-VWM7wyhZ2l_vnHpYp_imbhxAo"
+BOT_TOKEN = "8310654978:AAHt7wp6aAtNrOhLCn1Ob9s4BLHZ7dYRdYU"
 
 tele_client = TelegramClient("botyee", API_ID, API_HASH)
 # المطور الوحيد @RR8R9  
